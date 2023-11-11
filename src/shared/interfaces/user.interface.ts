@@ -19,7 +19,7 @@ interface User {
   access_token?: string;
   refresh_token?: string;
 
-  soloManager: {
+  soloManagement: {
     isAdmin: boolean;
     isMentor: boolean;
   }

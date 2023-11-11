@@ -1,11 +1,16 @@
 import { Request, Response, Router } from 'express';
 
-import fooController from './controllers/foo.controller';
+import authController from './controllers/auth.controller';
+import metaController from './controllers/meta.controller';
+import authMiddleware from './middleware/auth.middleware';
 
 const router = Router();
 
-router.get('/foo', fooController.getFoo);
-// aaaaa
+router.get('/config/frontend', metaController.getFrontendConfig);
+
+router.get('/auth/login', authController.authUser);
+router.get('/auth/logout', authController.logoutUser);
+router.get('/auth/profile', authMiddleware, authController.getProfile);
 
 router.use((req: Request, res: Response) => {
   // 404

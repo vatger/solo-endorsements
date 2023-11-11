@@ -77,7 +77,6 @@ export const CustomToolbar = () => {
         console.error(e);
       });
 
-
     if (user) {
       setItems([{
         label: `${user?.apidata.cid}`,
