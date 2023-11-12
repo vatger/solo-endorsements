@@ -1,6 +1,7 @@
 import { Request, Response, Router } from 'express';
 
 import authController from './controllers/auth.controller';
+import endorsementController from './controllers/endorsement.controller';
 import metaController from './controllers/meta.controller';
 import stationController from './controllers/station.controller';
 import authMiddleware from './middleware/auth.middleware';
@@ -17,6 +18,9 @@ router.get('/station', authMiddleware, stationController.getStations);
 router.post('/station', authMiddleware, stationController.addStation);
 router.patch('/station/:id', authMiddleware, stationController.updateStation);
 router.delete('/station/:id', authMiddleware, stationController.deleteStation);
+
+router.get('/solos', authMiddleware, endorsementController.getSoloEndorsements);
+router.post('/solos', authMiddleware, endorsementController.addSoloEndorsement);
 
 router.use((req: Request, res: Response) => {
   // 404
