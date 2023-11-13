@@ -19,10 +19,12 @@ interface User {
   access_token?: string;
   refresh_token?: string;
 
-  soloManagement: {
-    isAdmin: boolean;
-    isMentor: boolean;
-  }
+  soloManagement: SoloManagement;
+}
+
+export interface SoloManagement {
+  isAdmin: boolean;
+  isMentor: boolean;
 }
 
 export interface LongVatsimDetails {

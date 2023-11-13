@@ -11,6 +11,8 @@ export default function getConfig() {
   return {
     port: Number.isNaN(port) ? 3030 : port,
     mongoUri: process.env.MONGO_URI ?? '',
+    homepageUrl: process.env.HOMEPAGE_URL ?? 'https://vatsim-germany.org/api',
+    homepageKey: process.env.HOMEPAGE_KEY ?? '',
 
     vatsimAuthUrl: options.vatsimAuthUrl,
     clientId: options.vatsimAuthClientId,

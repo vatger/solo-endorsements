@@ -6,6 +6,7 @@ import { Dialog } from 'primereact/dialog';
 import { TabMenu } from 'primereact/tabmenu';
 import { useEffect, useState } from 'react';
 
+import { PermissionWrapper } from '../contexts/PermissionWrapper';
 import stationService from '../services/station.service';
 
 import AddStationDialog from './_stations/AddStationDialog';
@@ -17,7 +18,7 @@ function Stations() {
   const [stationData, setStationData] = useState<Station[]>([]);
   const [filteredData, setFilteredData] = useState<Station[]>([]);
   const [activeIndex, setActiveIndex] = useState<number>(0);
-  const [fir, setFir] = useState<'EDGG' | 'EDWW' | 'EDMM' | 'All'>('EDGG');
+  const [fir, setFir] = useState<'EDGG' | 'EDWW' | 'EDMM'>('EDGG');
 
   const [AddDialogVisibility, setAddDialogVisibility] = useState<boolean>(false);
 
@@ -96,40 +97,42 @@ function Stations() {
 
   return (
     <>
-      <ConfirmDialog />
-      <Dialog visible={AddDialogVisibility} onHide={() => setAddDialogVisibility(false)}>
-        <AddStationDialog onCompleted={() => { setAddDialogVisibility(false); updateStationData(); }} />
-      </Dialog>
-      <Dialog visible={EditDialogVisibility} onHide={() => setEditDialogVisibility(false)}>
-        <EditStationDialog station={selectedStation} onCompleted={() => { setEditDialogVisibility(false); updateStationData(); }} />
-      </Dialog>
-      <TabMenu model={[
-        { label: 'EDGG' },
-        { label: 'EDMM' },
-        { label: 'EDWW' },
-      ]}
-        activeIndex={activeIndex}
-        onTabChange={(e) => { setFir(e.value.label as 'EDGG' | 'EDWW' | 'EDMM' | 'All'); setActiveIndex(e.index); }}
-      />
-      <div style={{ display: 'flex' }}>
-        <Button
-          icon='pi pi-plus'
-          label='Add Station'
-          severity='success'
-          style={{ minWidth: '90%' }}
-          onClick={() => { setAddDialogVisibility(true); }} />
-        <Button
-          icon='pi pi-refresh'
-          severity='warning'
-          style={{ minWidth: '10%' }}
-          onClick={() => { updateStationData(); }}
+      <PermissionWrapper requiredPermission={'Mentor'}>
+        <ConfirmDialog />
+        <Dialog visible={AddDialogVisibility} onHide={() => setAddDialogVisibility(false)}>
+          <AddStationDialog onCompleted={() => { setAddDialogVisibility(false); updateStationData(); }} />
+        </Dialog>
+        <Dialog visible={EditDialogVisibility} onHide={() => setEditDialogVisibility(false)}>
+          <EditStationDialog station={selectedStation} onCompleted={() => { setEditDialogVisibility(false); updateStationData(); }} />
+        </Dialog>
+        <TabMenu model={[
+          { label: 'EDGG' },
+          { label: 'EDMM' },
+          { label: 'EDWW' },
+        ]}
+          activeIndex={activeIndex}
+          onTabChange={(e) => { setFir(e.value.label as 'EDGG' | 'EDWW' | 'EDMM'); setActiveIndex(e.index); }}
         />
-      </div>
-      <DataTable header='Stations' value={filteredData}>
-        <Column field='name' header='Name' />
-        <Column field="subStations" header="Substations" body={(station: Station) => formatSubStations(station.subStations)} />
-        <Column header="Actions" body={actionsTemplate} />
-      </DataTable>
+        <div style={{ display: 'flex' }}>
+          <Button
+            icon='pi pi-plus'
+            label='Add Station'
+            severity='success'
+            style={{ minWidth: '90%' }}
+            onClick={() => { setAddDialogVisibility(true); }} />
+          <Button
+            icon='pi pi-refresh'
+            severity='warning'
+            style={{ minWidth: '10%' }}
+            onClick={() => { updateStationData(); }}
+          />
+        </div>
+        <DataTable header='Stations' value={filteredData}>
+          <Column field='name' header='Name' />
+          <Column field="subStations" header="Substations" body={(station: Station) => formatSubStations(station.subStations)} />
+          <Column header="Actions" body={actionsTemplate} />
+        </DataTable>
+      </PermissionWrapper>
     </>
   );
 }

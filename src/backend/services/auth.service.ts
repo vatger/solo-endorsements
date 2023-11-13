@@ -5,6 +5,44 @@ import config from '../config';
 import userModel, { UserDocument } from '../models/user.model';
 import nestedobjectsUtils from '../utils/nestedobjects.utils';
 
+import { SoloManagement } from '@/shared/interfaces/user.interface';
+
+interface HomepageApiRepsonse {
+  is_vatger_member: boolean,
+  is_vatger_atd_lead: boolean | null,
+  is_vatger_atd_examiner: boolean | null,
+  is_vatger_mentor: boolean | null,
+}
+
+async function updateUserPermissions(id: string) {
+  try {
+    const HomepageApiKey = config().homepageKey;
+
+    const headers = {
+      'Authorization': `Token ${HomepageApiKey}`,
+      'Content-Type': 'application/json',
+    };
+
+    // TODO: replace with id '1439797'
+    const permissions: HomepageApiRepsonse = (await axios.get(config().homepageUrl + '/solos/' + 1439797, { headers })).data;
+    console.log(permissions);
+
+    if (permissions.is_vatger_member === false) {
+      return { isAdmin: false, isMentor: false };
+    }
+    if (permissions.is_vatger_atd_lead === true) {
+      return { isAdmin: true, isMentor: true };
+    }
+    if (permissions.is_vatger_atd_examiner === true || permissions.is_vatger_mentor === true) {
+      return { isAdmin: false, isMentor: true };
+    }
+
+    return { isAdmin: false, isMentor: false };
+  } catch (error) {
+    console.error(error);
+    return { isAdmin: false, isMentor: false };
+  }
+}
 
 export async function authUser(code: string): Promise<string> {
   const body = {
@@ -27,15 +65,15 @@ export async function authUser(code: string): Promise<string> {
 
     const userFromApi = userResponse.data.data;
 
-    console.log(userFromApi);
-
     let user = await userModel.findOne({ 'apidata.cid': userFromApi.cid });
+
+    const permissions: SoloManagement = await updateUserPermissions(userFromApi.cid);
 
     const updateOps: any = {
       apidata: userFromApi,
       access_token: tokenResponse.data.access_token,
       refresh_token: tokenResponse?.data?.refresh_token ?? null,
-      soloManagement: {},
+      soloManagement: permissions,
     };
 
     if (userFromApi.oauth.token_valid != 'true') {
@@ -79,7 +117,7 @@ export async function authUser(code: string): Promise<string> {
 
 export async function getUserFromToken(token: string): Promise<UserDocument> {
   try {
-    console.log('Token is:', token);
+    // console.log('Token is:', token);
     const tokendata = jwt.verify(token, config().jwtSecret, {});
 
     if (typeof tokendata == 'string') {

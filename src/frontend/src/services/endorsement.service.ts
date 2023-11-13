@@ -22,4 +22,24 @@ async function addSoloEndorsement(endorsement: UserEndorsement) {
   }
 }
 
-export default { getSoloEndorsements, addSoloEndorsement };
+async function extendSoloEndorsement(endorsement: UserEndorsement, extension: number) {
+  try {
+    const response = await axios.patch('/api/v1/solos/extend/' + endorsement.vatsim_id, { endorsement, extension });
+
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+async function deleteSoloEndorsement(endorsement: UserEndorsement) {
+  try {
+    const response = await axios.delete('/api/v1/solos/' + endorsement.vatsim_id);
+
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export default { getSoloEndorsements, addSoloEndorsement, extendSoloEndorsement, deleteSoloEndorsement };

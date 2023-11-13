@@ -14,10 +14,32 @@ async function getSoloEndorsements(req: Request, res: Response, next: NextFuncti
 
 async function addSoloEndorsement(req: Request, res: Response, next: NextFunction) {
   try {
-    await endorsementService.addSoloEndorsement(req.body.endorsement);
+    const userEndorsement = await endorsementService.addSoloEndorsement(req.body.endorsement);
+
+    res.json(userEndorsement);
   } catch (error) {
     next(error);
   }
 }
 
-export default { getSoloEndorsements, addSoloEndorsement };
+async function extendSoloEndorsement(req: Request, res: Response, next: NextFunction) {
+  try {
+    const userEndorsement = await endorsementService.extendSoloEndorsement(req.body.endorsement, req.body.extension);
+
+    res.json(userEndorsement);
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function deleteSoloEndorsement(req: Request, res: Response, next: NextFunction) {
+  try {
+    const userEndorsement = await endorsementService.deleteSoloEndorsement(req.params.id);
+
+    res.json(userEndorsement);
+  } catch (error) {
+    next(error);
+  }
+}
+
+export default { getSoloEndorsements, addSoloEndorsement, extendSoloEndorsement, deleteSoloEndorsement };

@@ -21,6 +21,8 @@ router.delete('/station/:id', authMiddleware, stationController.deleteStation);
 
 router.get('/solos', authMiddleware, endorsementController.getSoloEndorsements);
 router.post('/solos', authMiddleware, endorsementController.addSoloEndorsement);
+router.patch('/solos/extend/:id', authMiddleware, endorsementController.extendSoloEndorsement);
+router.delete('/solos/:id', authMiddleware, endorsementController.deleteSoloEndorsement);
 
 router.use((req: Request, res: Response) => {
   // 404

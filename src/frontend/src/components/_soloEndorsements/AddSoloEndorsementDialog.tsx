@@ -6,43 +6,13 @@ import { ListBox, ListBoxChangeEvent } from 'primereact/listbox';
 import { RadioButton, RadioButtonChangeEvent } from 'primereact/radiobutton';
 import { useEffect, useState } from 'react';
 
+import { addDaysToDate, calculateDayDifference, createDateWithDayOffset } from '../../../../shared/utils/date.util';
 import endorsementService from '../../services/endorsement.service';
 
 import { UserEndorsement } from '@/shared/interfaces/endorsement.interface';
 import { FIR } from '@/shared/interfaces/fir.interface';
 import { Station } from '@/shared/interfaces/station.interface';
 
-function addDaysToDate(startDate, daysToAdd) {
-  const result = new Date(startDate);
-  result.setDate(startDate.getDate() + daysToAdd);
-  return result;
-}
-
-const createDateWithDayOffset = (offsetInDays: number) => {
-  const date = new Date();
-  date.setHours(0);
-  date.setMinutes(0);
-  date.setSeconds(0);
-  date.setMilliseconds(0);
-
-  date.setDate(date.getDate() + offsetInDays);
-
-  return date;
-};
-
-function calculateDayDifference(startDate, endDate) {
-  // Convert both dates to milliseconds
-  const startMilliseconds = startDate.getTime();
-  const endMilliseconds = endDate.getTime();
-
-  // Calculate the time difference in milliseconds
-  const timeDifference = endMilliseconds - startMilliseconds;
-
-  // Calculate the day difference by dividing the time difference by the number of milliseconds in a day (24 * 60 * 60 * 1000)
-  const dayDifference = Math.floor(timeDifference / (24 * 60 * 60 * 1000));
-
-  return dayDifference;
-}
 
 function AddSoloEndorsementDialog({ firData, onCompleted }: { firData: FIR[], onCompleted: () => void }) {
   // ui states
@@ -81,7 +51,7 @@ function AddSoloEndorsementDialog({ firData, onCompleted }: { firData: FIR[], on
     }
 
     setSelectedEndDate(result);
-  }, [soloLength]);
+  }, [soloLength, selectedStartDate]);
 
   useEffect(() => {
     if (!id) {

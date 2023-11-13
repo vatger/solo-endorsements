@@ -5,10 +5,12 @@ import { Dialog } from 'primereact/dialog';
 import { TabMenu } from 'primereact/tabmenu';
 import { useEffect, useState } from 'react';
 
+import { PermissionWrapper } from '../contexts/PermissionWrapper';
 import endorsementService from '../services/endorsement.service';
 import stationService from '../services/station.service';
 
 import AddSoloEndorsementDialog from './_soloEndorsements/AddSoloEndorsementDialog';
+import { Actions, completedDays, remainingDays } from './_stations/DataTableItems';
 
 import { UserEndorsement } from '@/shared/interfaces/endorsement.interface';
 import { FIR } from '@/shared/interfaces/fir.interface';
@@ -120,34 +122,40 @@ function SoloEndorsements() {
 
   return (
     <>
-      <Dialog visible={AddDialogVisibility} onHide={() => setAddDialogVisibility(false)}>
-        <AddSoloEndorsementDialog onCompleted={() => { setAddDialogVisibility(false); updateEndorsementData(); }} firData={filteredFirData} />
-      </Dialog>
-      <TabMenu
-        model={[
-          { label: 'All' },
-          { label: 'EDGG' },
-          { label: 'EDMM' },
-          { label: 'EDWW' },
-        ]}
-        activeIndex={activeIndex}
-        onTabChange={(e) => { setFir(e.value.label as 'EDGG' | 'EDWW' | 'EDMM' | 'All'); setActiveIndex(e.index); }}
-      />
-      <div style={{ display: 'flex' }}>
-        <Button
-          icon='pi pi-plus'
-          label='Add Solo Endorsement'
-          severity='success'
-          style={{ minWidth: '100%' }}
-          onClick={() => { setAddDialogVisibility(true); }} />
-      </div>
-      <DataTable value={filteredSoloData}>
-        <Column header='ID' field='vatsim_id' />
-        <Column header='Station' body={(rowData: UserEndorsement) => { return rowData.soloEndorsement.station.name; }} />
-        <Column header='Start Date' body={(rowData: UserEndorsement) => { return rowData.soloEndorsement.startDate.toLocaleDateString(); }} />
-        <Column header='End date' body={(rowData: UserEndorsement) => { return rowData.soloEndorsement.endDate.toLocaleDateString(); }} />
-        <Column header='Completed days' body={(rowData: UserEndorsement) => { return String(rowData.soloEndorsement.completedDays) + '/' + String(rowData.soloEndorsement.maxDays); }} />
-      </DataTable>
+      <PermissionWrapper requiredPermission={'Mentor'}>
+        <Dialog visible={AddDialogVisibility} onHide={() => setAddDialogVisibility(false)}>
+          <AddSoloEndorsementDialog onCompleted={() => { setAddDialogVisibility(false); updateEndorsementData(); }} firData={filteredFirData} />
+        </Dialog>
+        <TabMenu
+          model={[
+            { label: 'All' },
+            { label: 'EDGG' },
+            { label: 'EDMM' },
+            { label: 'EDWW' },
+          ]}
+          activeIndex={activeIndex}
+          onTabChange={(e) => { setFir(e.value.label as 'EDGG' | 'EDWW' | 'EDMM' | 'All'); setActiveIndex(e.index); }}
+        />
+        <div style={{ display: 'flex' }}>
+          <Button
+            icon='pi pi-plus'
+            label='Add Solo Endorsement'
+            severity='success'
+            style={{ minWidth: '100%' }}
+            onClick={() => { setAddDialogVisibility(true); }} />
+        </div>
+        <DataTable value={filteredSoloData}>
+          <Column header='ID' field='vatsim_id' />
+          <Column header='Station' body={(rowData: UserEndorsement) => { return rowData.soloEndorsement.station.name; }} />
+          <Column header='Start Date' body={(rowData: UserEndorsement) => { return rowData.soloEndorsement.startDate.toLocaleDateString(); }} />
+          <Column header='End date' body={(rowData: UserEndorsement) => { return rowData.soloEndorsement.endDate.toLocaleDateString(); }} />
+          <Column header='Completed days' body={completedDays} />
+          <Column header='Remaining days' body={remainingDays} />
+          <Column header='Actions' body={(rowData: UserEndorsement) => {
+            return <Actions rowData={rowData} onCompleted={updateEndorsementData} />;
+          }} />
+        </DataTable>
+      </PermissionWrapper>
     </>
   );
 }
