@@ -23,9 +23,7 @@ async function updateUserPermissions(id: string) {
       'Content-Type': 'application/json',
     };
 
-    // TODO: replace with id '1439797'
-    const permissions: HomepageApiRepsonse = (await axios.get(config().homepageUrl + '/solos/' + 1439797, { headers })).data;
-    console.log(permissions);
+    const permissions: HomepageApiRepsonse = (await axios.get(config().homepageUrl + '/solos/' + id, { headers })).data;
 
     if (permissions.is_vatger_member === false) {
       return { isAdmin: false, isMentor: false };
