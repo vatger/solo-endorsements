@@ -43,6 +43,15 @@ async function addSoloEndorsement(endorsement: UserEndorsement) {
       user = new endorsementModel(endorsement);
     }
 
+    // create new endorsement, use saved completedDays from DB
+    user.soloEndorsement = {
+      station: endorsement.soloEndorsement.station,
+      startDate: endorsement.soloEndorsement.startDate,
+      endDate: endorsement.soloEndorsement.endDate,
+      maxDays: endorsement.soloEndorsement.maxDays,
+      completedDays: user.soloEndorsement.completedDays,
+    };
+
     await user.save();
 
     return user;
