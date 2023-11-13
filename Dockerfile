@@ -9,12 +9,12 @@ ENV NODE_ENV production
 
 RUN apk update && \
     apk upgrade && \
-    npm i npm@latest -g && \
+    npm i npm@8.19.4 -g && \
     chown node:node -R /opt
-    
-    # && \
-    # apk add --no-cache bash && \
-    # apk add --no-cache git && \
+
+# && \
+# apk add --no-cache bash && \
+# apk add --no-cache git && \
 
 COPY --chown=node:node package*.json ./
 
