@@ -25,6 +25,8 @@ function AddSoloEndorsementDialog({ firData, onCompleted }: { firData: FIR[], on
   const [selectedStartDate, setSelectedStartDate] = useState<Date>(createDateWithDayOffset(0));
   const [selectedEndDate, setSelectedEndDate] = useState<Date>(createDateWithDayOffset(soloLengthOptions[0]));
 
+  const [disableSubmitButton, setDisableSubmitButton] = useState<boolean>(false);
+
   const [dataValid, setDataValid] = useState<boolean>(false);
   useEffect(() => {
     const dayDifference = calculateDayDifference(selectedStartDate, selectedEndDate);
@@ -62,14 +64,16 @@ function AddSoloEndorsementDialog({ firData, onCompleted }: { firData: FIR[], on
     const soloLengthValid = soloLength <= 180 && calculateDayDifference(selectedStartDate, selectedEndDate) <= 180;
     const datesValid = selectedStartDate.getTime() < selectedEndDate.getTime();
     const idValid = id.length >= 6;
+    const selectedStationValid = selectedStation !== undefined;
 
-    setDataValid(soloLengthValid && datesValid && idValid);
-  }, [selectedStartDate, selectedEndDate, soloLength, id]);
+    setDataValid(soloLengthValid && datesValid && idValid && selectedStationValid);
+  }, [selectedStartDate, selectedEndDate, soloLength, id, selectedStation]);
 
   const clickSubmit = () => {
     if (!dataValid || selectedStation === undefined) {
       return;
     }
+    setDisableSubmitButton(true);
 
     const endorsement: UserEndorsement = {
       vatsim_id: Number(id),
@@ -81,8 +85,8 @@ function AddSoloEndorsementDialog({ firData, onCompleted }: { firData: FIR[], on
         maxDays: 180, //TODO: replace with station.maxDays
       },
     };
-    console.log(endorsement);
-    endorsementService.addSoloEndorsement(endorsement).then(() => onCompleted());
+
+    endorsementService.addSoloEndorsement(endorsement).then(() => { setDisableSubmitButton(false); onCompleted(); });
   };
 
   const groupTemplate = (option: FIR) => {
@@ -159,8 +163,10 @@ function AddSoloEndorsementDialog({ firData, onCompleted }: { firData: FIR[], on
         <Divider />
         <div className="p-inputgroup flex-1">
           <Button
+            label='Submit'
             severity={dataValid ? 'success' : 'danger'}
             style={{ minWidth: '100%' }}
+            disabled={disableSubmitButton}
             onClick={clickSubmit} />
         </div>
       </div>
