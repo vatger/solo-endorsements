@@ -3,20 +3,29 @@ import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { Dialog } from 'primereact/dialog';
 import { TabMenu } from 'primereact/tabmenu';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
-import { PermissionWrapper } from '../contexts/PermissionWrapper';
+import AuthContext from '../contexts/AuthProvider';
+import { AuthWrapper } from '../contexts/AuthWrapper';
 import endorsementService from '../services/endorsement.service';
 import stationService from '../services/station.service';
 
 import AddSoloEndorsementDialog from './_soloEndorsements/AddSoloEndorsementDialog';
 import { Actions, completedDays, remainingDays } from './_stations/DataTableItems';
+import { RenderIf } from './conditionals/RenderIf';
 
 import { UserEndorsement } from '@/shared/interfaces/endorsement.interface';
 import { FIR } from '@/shared/interfaces/fir.interface';
 import { Station } from '@/shared/interfaces/station.interface';
+import User from '@/shared/interfaces/user.interface';
 
 function SoloEndorsements() {
+  const auth: any = useContext(AuthContext);
+  const [user, setUser] = useState<User>();
+  useEffect(() => {
+    setUser(auth.auth.user);
+  }, [auth]);
+
   // ui states
   const [activeIndex, setActiveIndex] = useState<number>(0);
   const [fir, setFir] = useState<'EDGG' | 'EDWW' | 'EDMM' | 'All'>('All');
@@ -74,7 +83,7 @@ function SoloEndorsements() {
     });
   };
 
-  useEffect(() => { updateEndorsementData(); updateStationData(); }, []);
+  useEffect(() => { updateEndorsementData(); updateStationData(); }, [auth]);
 
   useEffect(() => {
     if (soloData.length === 0 || !soloData) { return; }
@@ -122,10 +131,11 @@ function SoloEndorsements() {
 
   return (
     <>
-      <PermissionWrapper requiredPermission={'Mentor'}>
-        <Dialog visible={AddDialogVisibility} onHide={() => setAddDialogVisibility(false)}>
-          <AddSoloEndorsementDialog onCompleted={() => { setAddDialogVisibility(false); updateEndorsementData(); }} firData={filteredFirData} />
-        </Dialog>
+      <AuthWrapper>
+        <RenderIf truthValue={user?.soloManagement.isMentor === true} elementTrue={
+          <Dialog visible={AddDialogVisibility} onHide={() => setAddDialogVisibility(false)}>
+            <AddSoloEndorsementDialog onCompleted={() => { setAddDialogVisibility(false); updateEndorsementData(); }} firData={filteredFirData} />
+          </Dialog>} />
         <TabMenu
           model={[
             { label: 'All' },
@@ -136,14 +146,15 @@ function SoloEndorsements() {
           activeIndex={activeIndex}
           onTabChange={(e) => { setFir(e.value.label as 'EDGG' | 'EDWW' | 'EDMM' | 'All'); setActiveIndex(e.index); }}
         />
-        <div style={{ display: 'flex' }}>
-          <Button
-            icon='pi pi-plus'
-            label='Add Solo Endorsement'
-            severity='success'
-            style={{ minWidth: '100%' }}
-            onClick={() => { setAddDialogVisibility(true); }} />
-        </div>
+        <RenderIf truthValue={user?.soloManagement.isAdmin === true || user?.soloManagement.isMentor === true} elementTrue={
+          <div style={{ display: 'flex' }}>
+            <Button
+              icon='pi pi-plus'
+              label='Add Solo Endorsement'
+              severity='success'
+              style={{ minWidth: '100%' }}
+              onClick={() => { setAddDialogVisibility(true); }} />
+          </div>} />
         <DataTable value={filteredSoloData}>
           <Column header='ID' field='vatsim_id' />
           <Column header='Station' body={(rowData: UserEndorsement) => { return rowData.soloEndorsement.station.name; }} />
@@ -151,11 +162,12 @@ function SoloEndorsements() {
           <Column header='End date' body={(rowData: UserEndorsement) => { return rowData.soloEndorsement.endDate.toLocaleDateString(); }} />
           <Column header='Completed days' body={completedDays} />
           <Column header='Remaining days' body={remainingDays} />
-          <Column header='Actions' body={(rowData: UserEndorsement) => {
-            return <Actions rowData={rowData} onCompleted={updateEndorsementData} />;
-          }} />
+          <RenderIf truthValue={user?.soloManagement.isAdmin === true} elementTrue={
+            <Column header='Actions' body={(rowData: UserEndorsement) => {
+              return <Actions rowData={rowData} onCompleted={updateEndorsementData} />;
+            }} />} />
         </DataTable>
-      </PermissionWrapper>
+      </AuthWrapper>
     </>
   );
 }
