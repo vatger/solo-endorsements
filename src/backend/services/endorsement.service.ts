@@ -11,6 +11,10 @@ async function getSoloEndorsements() {
 
     const userEndorsements: UserEndorsement[] = [];
     for (const user of userEntries) {
+      if (user.soloEndorsement.station === null) {
+        continue;
+      }
+
       const station = await stationModel.findById(user.soloEndorsement.station._id);
 
       if (user.soloEndorsement.endDate.getTime() === new Date(-1).getTime() || user.soloEndorsement.startDate.getTime() === new Date(-1).getTime()) {
