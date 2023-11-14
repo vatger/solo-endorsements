@@ -20,7 +20,7 @@ router.post('/station', authMiddleware, permissionMiddleware, stationController.
 router.patch('/station/:id', authMiddleware, permissionMiddleware, stationController.updateStation);
 router.delete('/station/:id', authMiddleware, permissionMiddleware, stationController.deleteStation);
 
-router.get('/solos', authMiddleware, permissionMiddleware, endorsementController.getSoloEndorsements);
+router.get('/solos', authMiddleware, endorsementController.getSoloEndorsements);
 router.post('/solos', authMiddleware, permissionMiddleware, endorsementController.addSoloEndorsement);
 router.patch('/solos/extend/:id', authMiddleware, permissionMiddleware, endorsementController.extendSoloEndorsement);
 router.delete('/solos/:id', authMiddleware, permissionMiddleware, endorsementController.deleteSoloEndorsement);

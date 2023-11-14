@@ -4,17 +4,26 @@ import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 import { DataTable } from 'primereact/datatable';
 import { Dialog } from 'primereact/dialog';
 import { TabMenu } from 'primereact/tabmenu';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
+import AuthContext from '../contexts/AuthProvider';
 import { PermissionWrapper } from '../contexts/PermissionWrapper';
 import stationService from '../services/station.service';
 
 import AddStationDialog from './_stations/AddStationDialog';
 import EditStationDialog from './_stations/EditStationDialog';
+import { RenderIf } from './conditionals/RenderIf';
 
 import { Station } from '@/shared/interfaces/station.interface';
+import User from '@/shared/interfaces/user.interface';
 
 function Stations() {
+  const auth: any = useContext(AuthContext);
+  const [user, setUser] = useState<User>();
+  useEffect(() => {
+    setUser(auth.auth.user);
+  }, [auth]);
+
   const [stationData, setStationData] = useState<Station[]>([]);
   const [filteredData, setFilteredData] = useState<Station[]>([]);
   const [activeIndex, setActiveIndex] = useState<number>(0);
@@ -53,7 +62,7 @@ function Stations() {
     });
   };
 
-  useEffect(() => updateStationData(), []);
+  useEffect(() => updateStationData(), [auth]);
 
   const formatSubStations = (subStations: string[]) => {
     subStations = [...subStations].sort();
@@ -113,24 +122,26 @@ function Stations() {
           activeIndex={activeIndex}
           onTabChange={(e) => { setFir(e.value.label as 'EDGG' | 'EDWW' | 'EDMM'); setActiveIndex(e.index); }}
         />
-        <div style={{ display: 'flex' }}>
-          <Button
-            icon='pi pi-plus'
-            label='Add Station'
-            severity='success'
-            style={{ minWidth: '90%' }}
-            onClick={() => { setAddDialogVisibility(true); }} />
-          <Button
-            icon='pi pi-refresh'
-            severity='warning'
-            style={{ minWidth: '10%' }}
-            onClick={() => { updateStationData(); }}
-          />
-        </div>
+        <RenderIf truthValue={user?.soloManagement.isAdmin === true} elementTrue={
+          <div style={{ display: 'flex' }}>
+            <Button
+              icon='pi pi-plus'
+              label='Add Station'
+              severity='success'
+              style={{ minWidth: '90%' }}
+              onClick={() => { setAddDialogVisibility(true); }} />
+            <Button
+              icon='pi pi-refresh'
+              severity='warning'
+              style={{ minWidth: '10%' }}
+              onClick={() => { updateStationData(); }}
+            />
+          </div>}
+        />
         <DataTable header='Stations' value={filteredData}>
           <Column field='name' header='Name' />
           <Column field="subStations" header="Substations" body={(station: Station) => formatSubStations(station.subStations)} />
-          <Column header="Actions" body={actionsTemplate} />
+          <RenderIf truthValue={user?.soloManagement.isAdmin === true} elementTrue={<Column header="Actions" body={actionsTemplate} />} />
         </DataTable>
       </PermissionWrapper>
     </>
