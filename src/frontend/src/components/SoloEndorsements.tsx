@@ -164,7 +164,7 @@ function SoloEndorsements() {
           <Column header='Extension Number' body={(rowData: UserEndorsement) => { return rowData.soloEndorsement.extensionNumber; }} />
           <Column header='Actions' body={(rowData: UserEndorsement) => {
             return <Actions rowData={rowData} onCompleted={updateEndorsementData} />;
-          }} hidden={user?.soloManagement.isAdmin === false} />
+          }} hidden={user?.soloManagement.isMentor === false && user?.soloManagement.isAdmin === false} />
         </DataTable>
       </AuthWrapper>
     </>

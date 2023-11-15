@@ -1,10 +1,13 @@
 import { Button } from 'primereact/button';
-import { useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
 import { calculateDayDifference } from '../../../../shared/utils/date.util';
+import AuthContext from '../../contexts/AuthProvider';
 import endorsementService from '../../services/endorsement.service';
+import { RenderIf } from '../conditionals/RenderIf';
 
 import { UserEndorsement } from '@/shared/interfaces/endorsement.interface';
+import User from '@/shared/interfaces/user.interface';
 
 export function remainingDays(rowData: UserEndorsement) {
 
@@ -18,6 +21,12 @@ export function remainingDays(rowData: UserEndorsement) {
 }
 
 export function Actions({ rowData, onCompleted }: { rowData: UserEndorsement, onCompleted: () => void }) {
+  const auth: any = useContext(AuthContext);
+  const [user, setUser] = useState<User>();
+  useEffect(() => {
+    setUser(auth.auth.user);
+  }, [auth]);
+
 
   const [disableExtendButton, setDisableExtendButton] = useState<boolean>(false);
   const [disableDeleteButton, setDisableDeleteButton] = useState<boolean>(false);
@@ -42,12 +51,14 @@ export function Actions({ rowData, onCompleted }: { rowData: UserEndorsement, on
           icon='pi pi-calendar-plus'
           onClick={() => { extendSolo(); setDisableExtendButton(true); }}
           disabled={disableExtendButton} />
-        <Button
-          label='Delete Endorsement'
-          severity='danger'
-          icon='pi pi-trash'
-          onClick={() => { deleteSolo(); setDisableDeleteButton(true); }}
-          disabled={disableDeleteButton}
+        <RenderIf truthValue={user?.soloManagement.isAdmin === true} elementTrue={
+          <Button
+            label='Delete Endorsement'
+            severity='danger'
+            icon='pi pi-trash'
+            onClick={() => { deleteSolo(); setDisableDeleteButton(true); }}
+            disabled={disableDeleteButton}
+          />}
         />
       </div>
     </>

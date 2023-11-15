@@ -141,7 +141,7 @@ function Stations() {
         <DataTable header='Stations' value={filteredData}>
           <Column field='name' header='Name' />
           <Column field="subStations" header="Substations" body={(station: Station) => formatSubStations(station.subStations)} />
-          <RenderIf truthValue={user?.soloManagement.isAdmin === true} elementTrue={<Column header="Actions" body={actionsTemplate} />} />
+          <Column header="Actions" body={actionsTemplate} hidden={user?.soloManagement.isAdmin === false} />
         </DataTable>
       </PermissionWrapper>
     </>
