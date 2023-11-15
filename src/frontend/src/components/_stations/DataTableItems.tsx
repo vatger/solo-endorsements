@@ -43,7 +43,7 @@ export function Actions({ rowData, onCompleted }: { rowData: UserEndorsement, on
   const severity = !maxExtensionsReached ? 'success' : 'warning';
 
   const extendSolo = () => {
-    if (!maxExtensionsReached) { return; }
+    if (maxExtensionsReached) { setDisableExtendButton(false); return; }
     endorsementService.extendSoloEndorsement(rowData).then(() => { setDisableExtendButton(false); onCompleted(); });
   };
 
@@ -59,14 +59,14 @@ export function Actions({ rowData, onCompleted }: { rowData: UserEndorsement, on
           severity={severity}
           tooltip={maxExtensionsReached ? 'Solo can not be extended, max extensions reached' : ''}
           icon='pi pi-calendar-plus'
-          onClick={() => { extendSolo(); setDisableExtendButton(true); }}
+          onClick={() => { setDisableExtendButton(true); extendSolo(); }}
           disabled={disableExtendButton} />
         <RenderIf truthValue={user?.soloManagement.isAdmin === true} elementTrue={
           <Button
             label='Delete Endorsement'
             severity='danger'
             icon='pi pi-trash'
-            onClick={() => { deleteSolo(); setDisableDeleteButton(true); }}
+            onClick={() => { setDisableDeleteButton(true); deleteSolo(); }}
             disabled={disableDeleteButton}
           />}
         />
