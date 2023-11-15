@@ -9,6 +9,15 @@ import { RenderIf } from '../conditionals/RenderIf';
 import { UserEndorsement } from '@/shared/interfaces/endorsement.interface';
 import User from '@/shared/interfaces/user.interface';
 
+export function userID(rowData: UserEndorsement) {
+  // return userID and link to vatsim statistic website of that users logins of the last month
+  return (
+    <a href={'https://stats.vatsim.net/stats/' + rowData.vatsim_id + '?range=1month'} target='_blank' style={{ color: 'var(--font-family)' }}>
+      {rowData.vatsim_id}
+    </a>
+  );
+}
+
 export function remainingDays(rowData: UserEndorsement) {
 
   const remainingSoloDays = calculateDayDifference(new Date(), rowData.soloEndorsement.endDate);

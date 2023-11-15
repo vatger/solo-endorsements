@@ -11,7 +11,7 @@ import endorsementService from '../services/endorsement.service';
 import stationService from '../services/station.service';
 
 import AddSoloEndorsementDialog from './_soloEndorsements/AddSoloEndorsementDialog';
-import { Actions, remainingDays } from './_stations/DataTableItems';
+import { Actions, remainingDays, userID } from './_stations/DataTableItems';
 import { RenderIf } from './conditionals/RenderIf';
 
 import { UserEndorsement } from '@/shared/interfaces/endorsement.interface';
@@ -157,6 +157,7 @@ function SoloEndorsements() {
           </div>} />
         <DataTable value={filteredSoloData}>
           <Column
+            body={userID}
             header='ID' field='vatsim_id'
             align='center'
             filter />
