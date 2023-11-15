@@ -77,10 +77,17 @@ async function extendSoloEndorsement(endorsement: UserEndorsement) {
       return;
     }
 
-    // extend endDate by thirty days
-    const newEndDate = addDaysToDate(user.soloEndorsement.endDate, 30);
+    const currentDate = new Date();
+    // end date is in past
+    if (user.soloEndorsement.endDate < currentDate) {
+      // solo endorsement is expired, assign a new startDate and a new endDate
+      user.soloEndorsement.startDate = currentDate;
+      user.soloEndorsement.endDate = addDaysToDate(currentDate, 30);
+    } else {
+      // solo endorsement is on-going, extend endDate by thirty days
+      user.soloEndorsement.endDate = addDaysToDate(user.soloEndorsement.endDate, 30);
+    }
 
-    user.soloEndorsement.endDate = newEndDate;
     user.soloEndorsement.extensionNumber += 1;
 
     await user.save();
