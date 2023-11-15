@@ -55,10 +55,8 @@ export const CustomToolbar = () => {
       label: 'Solos', icon: 'pi pi-user', command: () => { navigate('/'); },
     }, {
       label: 'Stations', icon: 'pi pi-cog', command: () => { navigate('/stations'); },
-    }, {
-      label: 'Settings', icon: 'pi pi-sliders-v', command: () => { navigate('/settings'); },
     }];
-  const startContent = [<TabMenu model={tabMenuItems} />];
+  const startContent = [<TabMenu key='LoginTabmenu' model={tabMenuItems} />];
 
   // login / logout tabmenu
   const defaultItems = {
@@ -86,7 +84,7 @@ export const CustomToolbar = () => {
     }
   }, [auth]);
 
-  const endContent = [<TabMenu model={items} />];
+  const endContent = [<TabMenu key='TabmenuLogin' model={items} />];
 
-  return <> <Toolbar start={startContent} end={endContent} /></>;
+  return <Toolbar start={startContent} end={endContent} />;
 };
