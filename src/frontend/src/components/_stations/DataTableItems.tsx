@@ -31,9 +31,10 @@ export function Actions({ rowData, onCompleted }: { rowData: UserEndorsement, on
   const [disableExtendButton, setDisableExtendButton] = useState<boolean>(false);
   const [disableDeleteButton, setDisableDeleteButton] = useState<boolean>(false);
   const maxExtensionsReached = rowData.soloEndorsement.extensionNumber >= 2;
-  const severity = !maxExtensionsReached ? 'success' : 'danger';
+  const severity = !maxExtensionsReached ? 'success' : 'warning';
 
   const extendSolo = () => {
+    if (!maxExtensionsReached) { return; }
     endorsementService.extendSoloEndorsement(rowData).then(() => { setDisableExtendButton(false); onCompleted(); });
   };
 
