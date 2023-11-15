@@ -156,12 +156,29 @@ function SoloEndorsements() {
               onClick={() => { setAddDialogVisibility(true); }} />
           </div>} />
         <DataTable value={filteredSoloData}>
-          <Column header='ID' field='vatsim_id' />
-          <Column header='Station' body={(rowData: UserEndorsement) => { return rowData.soloEndorsement.station.name; }} />
-          <Column header='Start Date' body={(rowData: UserEndorsement) => { return rowData.soloEndorsement.startDate.toLocaleDateString(); }} />
-          <Column header='End date' body={(rowData: UserEndorsement) => { return rowData.soloEndorsement.endDate.toLocaleDateString(); }} />
-          <Column header='Remaining days' body={remainingDays} />
-          <Column header='Extension Number' body={(rowData: UserEndorsement) => { return rowData.soloEndorsement.extensionNumber; }} />
+          <Column
+            header='ID' field='vatsim_id'
+            align='center' />
+          <Column
+            header='Station'
+            body={(rowData: UserEndorsement) => { return rowData.soloEndorsement.station.name; }}
+            align='center' />
+          <Column
+            header='Start Date'
+            body={(rowData: UserEndorsement) => { return rowData.soloEndorsement.startDate.toLocaleDateString(); }}
+            align='center' />
+          <Column
+            header='End date'
+            body={(rowData: UserEndorsement) => { return rowData.soloEndorsement.endDate.toLocaleDateString(); }}
+            align='center' />
+          <Column
+            header='Remaining days'
+            body={remainingDays}
+            align='center' />
+          <Column
+            header='Extension Number'
+            body={(rowData: UserEndorsement) => { return rowData.soloEndorsement.extensionNumber; }}
+            align='center' />
           <Column header='Actions' body={(rowData: UserEndorsement) => {
             return <Actions rowData={rowData} onCompleted={updateEndorsementData} />;
           }} hidden={user?.soloManagement.isMentor === false && user?.soloManagement.isAdmin === false} />
