@@ -22,9 +22,9 @@ async function addSoloEndorsement(endorsement: UserEndorsement) {
   }
 }
 
-async function extendSoloEndorsement(endorsement: UserEndorsement, extension: number) {
+async function extendSoloEndorsement(endorsement: UserEndorsement) {
   try {
-    const response = await axios.patch('/api/v1/solos/extend/' + endorsement.vatsim_id, { endorsement, extension });
+    const response = await axios.patch('/api/v1/solos/extend/' + endorsement.vatsim_id, { endorsement });
 
     return response.data;
   } catch (error) {

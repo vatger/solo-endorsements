@@ -71,7 +71,7 @@ function AddSoloEndorsementDialog({ firData, onCompleted }: { firData: FIR[], on
         startDate: selectedStartDate,
         endDate: endDate,
         completedDays: 0,
-        maxDays: 180, //TODO: replace with station.maxDays
+        extensionNumber: 0,
       },
     };
 

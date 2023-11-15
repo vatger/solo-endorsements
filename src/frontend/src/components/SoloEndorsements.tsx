@@ -11,7 +11,7 @@ import endorsementService from '../services/endorsement.service';
 import stationService from '../services/station.service';
 
 import AddSoloEndorsementDialog from './_soloEndorsements/AddSoloEndorsementDialog';
-import { Actions, completedDays, remainingDays } from './_stations/DataTableItems';
+import { Actions, remainingDays } from './_stations/DataTableItems';
 import { RenderIf } from './conditionals/RenderIf';
 
 import { UserEndorsement } from '@/shared/interfaces/endorsement.interface';
@@ -55,7 +55,7 @@ function SoloEndorsements() {
             startDate: new Date(element.soloEndorsement.startDate),
             endDate: new Date(element.soloEndorsement.endDate),
             completedDays: element.soloEndorsement.completedDays,
-            maxDays: element.soloEndorsement.maxDays,
+            extensionNumber: element.soloEndorsement.extensionNumber,
           },
         };
       });
@@ -160,8 +160,8 @@ function SoloEndorsements() {
           <Column header='Station' body={(rowData: UserEndorsement) => { return rowData.soloEndorsement.station.name; }} />
           <Column header='Start Date' body={(rowData: UserEndorsement) => { return rowData.soloEndorsement.startDate.toLocaleDateString(); }} />
           <Column header='End date' body={(rowData: UserEndorsement) => { return rowData.soloEndorsement.endDate.toLocaleDateString(); }} />
-          {/* <Column header='Completed days' body={completedDays} /> temporary removal */}
           <Column header='Remaining days' body={remainingDays} />
+          <Column header='Extension Number' body={(rowData: UserEndorsement) => { return rowData.soloEndorsement.extensionNumber; }} />
           <Column header='Actions' body={(rowData: UserEndorsement) => {
             return <Actions rowData={rowData} onCompleted={updateEndorsementData} />;
           }} hidden={user?.soloManagement.isAdmin === false} />

@@ -7,6 +7,6 @@ export interface UserEndorsement {
     startDate: Date,
     endDate: Date,
     completedDays: number,
-    maxDays: number,
+    extensionNumber: number,
   }
 }

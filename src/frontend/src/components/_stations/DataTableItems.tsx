@@ -1,23 +1,10 @@
 import { Button } from 'primereact/button';
-import { Divider } from 'primereact/divider';
 import { useState } from 'react';
 
 import { calculateDayDifference } from '../../../../shared/utils/date.util';
 import endorsementService from '../../services/endorsement.service';
 
 import { UserEndorsement } from '@/shared/interfaces/endorsement.interface';
-
-export function completedDays(rowData: UserEndorsement) {
-  const totalCompletedDays = calculateDayDifference(rowData.soloEndorsement.startDate, new Date()) + rowData.soloEndorsement.completedDays;
-
-  if (totalCompletedDays < 0) {
-    return `Solo begins in ${-totalCompletedDays} Days`;
-  }
-
-  const maxSoloLength = String(rowData.soloEndorsement.maxDays);
-
-  return `${totalCompletedDays}` + '/' + maxSoloLength;
-}
 
 export function remainingDays(rowData: UserEndorsement) {
 
@@ -34,12 +21,11 @@ export function Actions({ rowData, onCompleted }: { rowData: UserEndorsement, on
 
   const [disableExtendButton, setDisableExtendButton] = useState<boolean>(false);
   const [disableDeleteButton, setDisableDeleteButton] = useState<boolean>(false);
-  const totalCompletedDays = calculateDayDifference(rowData.soloEndorsement.startDate, new Date()) + rowData.soloEndorsement.completedDays;
-  const remainingSoloDays = rowData.soloEndorsement.maxDays - totalCompletedDays;
-  const severity = remainingSoloDays >= 30 ? 'success' : (remainingSoloDays > 0 ? 'warning' : 'danger');
+  const maxExtensionsReached = rowData.soloEndorsement.extensionNumber >= 2;
+  const severity = !maxExtensionsReached ? 'success' : 'danger';
 
   const extendSolo = () => {
-    endorsementService.extendSoloEndorsement(rowData, remainingSoloDays > 30 ? 30 : remainingSoloDays).then(() => { setDisableExtendButton(false); onCompleted(); });
+    endorsementService.extendSoloEndorsement(rowData).then(() => { setDisableExtendButton(false); onCompleted(); });
   };
 
   const deleteSolo = () => {
@@ -52,6 +38,7 @@ export function Actions({ rowData, onCompleted }: { rowData: UserEndorsement, on
         <Button
           label='Extend Endorsement'
           severity={severity}
+          tooltip={maxExtensionsReached ? 'Solo can not be extended, max extensions reached' : ''}
           icon='pi pi-calendar-plus'
           onClick={() => { extendSolo(); setDisableExtendButton(true); }}
           disabled={disableExtendButton} />

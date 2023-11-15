@@ -12,7 +12,7 @@ const userEndorsementSchema = new mongoose.Schema(
       startDate: { type: Date, default: '' },
       endDate: { type: Date, default: '' },
       completedDays: { type: Number, default: 0 },
-      maxDays: { type: Number, default: 0 },
+      extensionNumber: { type: Number, default: 0 },
     },
   },
   { timestamps: true },

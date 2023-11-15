@@ -28,7 +28,7 @@ async function getSoloEndorsements() {
           startDate: user.soloEndorsement.startDate,
           endDate: user.soloEndorsement.endDate,
           completedDays: user.soloEndorsement.completedDays,
-          maxDays: user.soloEndorsement.maxDays,
+          extensionNumber: user.soloEndorsement.extensionNumber,
         },
       };
       userEndorsements.push(userEndorsement);
@@ -52,8 +52,8 @@ async function addSoloEndorsement(endorsement: UserEndorsement) {
       station: endorsement.soloEndorsement.station,
       startDate: endorsement.soloEndorsement.startDate,
       endDate: endorsement.soloEndorsement.endDate,
-      maxDays: endorsement.soloEndorsement.maxDays,
       completedDays: user.soloEndorsement.completedDays,
+      extensionNumber: endorsement.soloEndorsement.extensionNumber,
     };
 
     await user.save();
@@ -64,7 +64,7 @@ async function addSoloEndorsement(endorsement: UserEndorsement) {
   }
 }
 
-async function extendSoloEndorsement(endorsement: UserEndorsement, requestedExtensionDays: number) {
+async function extendSoloEndorsement(endorsement: UserEndorsement) {
   try {
     const user: UserEndorsementDocument | null = await endorsementModel.findOne({ vatsim_id: endorsement.vatsim_id });
 
@@ -72,19 +72,16 @@ async function extendSoloEndorsement(endorsement: UserEndorsement, requestedExte
       return;
     }
 
-    // calculate the maximum of days for that an extension can be granted
-    const daysUsed = calculateDayDifference(user.soloEndorsement.startDate, user.soloEndorsement.endDate) + user.soloEndorsement.completedDays;
-
-    const remainingDaysOfSolo = user.soloEndorsement.maxDays - daysUsed;
-
-    if (remainingDaysOfSolo < requestedExtensionDays) {
-      // requestedExtensionDays exceeds remainingDaysOfSolo, an extension cannot be granted
+    // if two extension have already been granted, do not grant another
+    if (user.soloEndorsement.extensionNumber >= 2) {
       return;
     }
 
-    const newEndDate = addDaysToDate(user.soloEndorsement.endDate, requestedExtensionDays);
+    // extend endDate by thirty days
+    const newEndDate = addDaysToDate(user.soloEndorsement.endDate, 30);
 
     user.soloEndorsement.endDate = newEndDate;
+    user.soloEndorsement.extensionNumber += 1;
 
     await user.save();
 
