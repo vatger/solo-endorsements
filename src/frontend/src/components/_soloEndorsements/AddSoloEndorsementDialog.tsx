@@ -107,7 +107,7 @@ function AddSoloEndorsementDialog({ firData, onCompleted }: { firData: FIR[], on
               value={selectedStartDate}
               onChange={(e) => { setSelectedStartDate(e.target.value as Date); }}
               dateFormat="dd.mm.yy"
-              // minDate={createDateWithDayOffset(0)}
+              minDate={createDateWithDayOffset(0)}
               maxDate={createDateWithDayOffset(14)}
               style={{ width: '8rem' }} />
             <label htmlFor="startDate">Startdate</label>
