@@ -160,7 +160,7 @@ function SoloEndorsements() {
           <Column header='Station' body={(rowData: UserEndorsement) => { return rowData.soloEndorsement.station.name; }} />
           <Column header='Start Date' body={(rowData: UserEndorsement) => { return rowData.soloEndorsement.startDate.toLocaleDateString(); }} />
           <Column header='End date' body={(rowData: UserEndorsement) => { return rowData.soloEndorsement.endDate.toLocaleDateString(); }} />
-          <Column header='Completed days' body={completedDays} />
+          {/* <Column header='Completed days' body={completedDays} /> temporary removal */}
           <Column header='Remaining days' body={remainingDays} />
           <Column header='Actions' body={(rowData: UserEndorsement) => {
             return <Actions rowData={rowData} onCompleted={updateEndorsementData} />;
