@@ -11,7 +11,7 @@ import endorsementService from '../services/endorsement.service';
 import stationService from '../services/station.service';
 
 import AddSoloEndorsementDialog from './_soloEndorsements/AddSoloEndorsementDialog';
-import { Actions, completedDays, remainingDays } from './_stations/DataTableItems';
+import { Actions, remainingDays } from './_stations/DataTableItems';
 import { RenderIf } from './conditionals/RenderIf';
 
 import { UserEndorsement } from '@/shared/interfaces/endorsement.interface';
@@ -55,7 +55,7 @@ function SoloEndorsements() {
             startDate: new Date(element.soloEndorsement.startDate),
             endDate: new Date(element.soloEndorsement.endDate),
             completedDays: element.soloEndorsement.completedDays,
-            maxDays: element.soloEndorsement.maxDays,
+            extensionNumber: element.soloEndorsement.extensionNumber,
           },
         };
       });
@@ -156,15 +156,33 @@ function SoloEndorsements() {
               onClick={() => { setAddDialogVisibility(true); }} />
           </div>} />
         <DataTable value={filteredSoloData}>
-          <Column header='ID' field='vatsim_id' />
-          <Column header='Station' body={(rowData: UserEndorsement) => { return rowData.soloEndorsement.station.name; }} />
-          <Column header='Start Date' body={(rowData: UserEndorsement) => { return rowData.soloEndorsement.startDate.toLocaleDateString(); }} />
-          <Column header='End date' body={(rowData: UserEndorsement) => { return rowData.soloEndorsement.endDate.toLocaleDateString(); }} />
-          {/* <Column header='Completed days' body={completedDays} /> temporary removal */}
-          <Column header='Remaining days' body={remainingDays} />
+          <Column
+            header='ID' field='vatsim_id'
+            align='center'
+            filter />
+          <Column
+            header='Station'
+            body={(rowData: UserEndorsement) => { return rowData.soloEndorsement.station.name; }}
+            align='center' />
+          <Column
+            header='Start Date'
+            body={(rowData: UserEndorsement) => { return rowData.soloEndorsement.startDate.toLocaleDateString(); }}
+            align='center' />
+          <Column
+            header='End date'
+            body={(rowData: UserEndorsement) => { return rowData.soloEndorsement.endDate.toLocaleDateString(); }}
+            align='center' />
+          <Column
+            header='Remaining days'
+            body={remainingDays}
+            align='center' />
+          <Column
+            header='Extension Number'
+            body={(rowData: UserEndorsement) => { return rowData.soloEndorsement.extensionNumber; }}
+            align='center' />
           <Column header='Actions' body={(rowData: UserEndorsement) => {
             return <Actions rowData={rowData} onCompleted={updateEndorsementData} />;
-          }} hidden={user?.soloManagement.isAdmin === false} />
+          }} hidden={user?.soloManagement.isMentor === false && user?.soloManagement.isAdmin === false} />
         </DataTable>
       </AuthWrapper>
     </>

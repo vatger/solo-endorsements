@@ -1,23 +1,13 @@
 import { Button } from 'primereact/button';
-import { Divider } from 'primereact/divider';
-import { useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
 import { calculateDayDifference } from '../../../../shared/utils/date.util';
+import AuthContext from '../../contexts/AuthProvider';
 import endorsementService from '../../services/endorsement.service';
+import { RenderIf } from '../conditionals/RenderIf';
 
 import { UserEndorsement } from '@/shared/interfaces/endorsement.interface';
-
-export function completedDays(rowData: UserEndorsement) {
-  const totalCompletedDays = calculateDayDifference(rowData.soloEndorsement.startDate, new Date()) + rowData.soloEndorsement.completedDays;
-
-  if (totalCompletedDays < 0) {
-    return `Solo begins in ${-totalCompletedDays} Days`;
-  }
-
-  const maxSoloLength = String(rowData.soloEndorsement.maxDays);
-
-  return `${totalCompletedDays}` + '/' + maxSoloLength;
-}
+import User from '@/shared/interfaces/user.interface';
 
 export function remainingDays(rowData: UserEndorsement) {
 
@@ -31,15 +21,21 @@ export function remainingDays(rowData: UserEndorsement) {
 }
 
 export function Actions({ rowData, onCompleted }: { rowData: UserEndorsement, onCompleted: () => void }) {
+  const auth: any = useContext(AuthContext);
+  const [user, setUser] = useState<User>();
+  useEffect(() => {
+    setUser(auth.auth.user);
+  }, [auth]);
+
 
   const [disableExtendButton, setDisableExtendButton] = useState<boolean>(false);
   const [disableDeleteButton, setDisableDeleteButton] = useState<boolean>(false);
-  const totalCompletedDays = calculateDayDifference(rowData.soloEndorsement.startDate, new Date()) + rowData.soloEndorsement.completedDays;
-  const remainingSoloDays = rowData.soloEndorsement.maxDays - totalCompletedDays;
-  const severity = remainingSoloDays >= 30 ? 'success' : (remainingSoloDays > 0 ? 'warning' : 'danger');
+  const maxExtensionsReached = rowData.soloEndorsement.extensionNumber >= 2;
+  const severity = !maxExtensionsReached ? 'success' : 'warning';
 
   const extendSolo = () => {
-    endorsementService.extendSoloEndorsement(rowData, remainingSoloDays > 30 ? 30 : remainingSoloDays).then(() => { setDisableExtendButton(false); onCompleted(); });
+    if (!maxExtensionsReached) { return; }
+    endorsementService.extendSoloEndorsement(rowData).then(() => { setDisableExtendButton(false); onCompleted(); });
   };
 
   const deleteSolo = () => {
@@ -52,15 +48,18 @@ export function Actions({ rowData, onCompleted }: { rowData: UserEndorsement, on
         <Button
           label='Extend Endorsement'
           severity={severity}
+          tooltip={maxExtensionsReached ? 'Solo can not be extended, max extensions reached' : ''}
           icon='pi pi-calendar-plus'
           onClick={() => { extendSolo(); setDisableExtendButton(true); }}
           disabled={disableExtendButton} />
-        <Button
-          label='Delete Endorsement'
-          severity='danger'
-          icon='pi pi-trash'
-          onClick={() => { deleteSolo(); setDisableDeleteButton(true); }}
-          disabled={disableDeleteButton}
+        <RenderIf truthValue={user?.soloManagement.isAdmin === true} elementTrue={
+          <Button
+            label='Delete Endorsement'
+            severity='danger'
+            icon='pi pi-trash'
+            onClick={() => { deleteSolo(); setDisableDeleteButton(true); }}
+            disabled={disableDeleteButton}
+          />}
         />
       </div>
     </>

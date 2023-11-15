@@ -24,7 +24,7 @@ async function addSoloEndorsement(req: Request, res: Response, next: NextFunctio
 
 async function extendSoloEndorsement(req: Request, res: Response, next: NextFunction) {
   try {
-    const userEndorsement = await endorsementService.extendSoloEndorsement(req.body.endorsement, req.body.extension);
+    const userEndorsement = await endorsementService.extendSoloEndorsement(req.body.endorsement);
 
     res.json(userEndorsement);
   } catch (error) {

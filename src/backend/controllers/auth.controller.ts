@@ -23,7 +23,7 @@ export async function authUser(
     });
 
     const user: UserDocument = await authService.getUserFromToken(response);
-    console.debug('User is: %o', user);
+    // console.debug('User is: %o', user);
 
     res.redirect('/');
   } catch (error) {
