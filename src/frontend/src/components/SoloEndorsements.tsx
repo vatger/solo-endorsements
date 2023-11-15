@@ -162,10 +162,9 @@ function SoloEndorsements() {
           <Column header='End date' body={(rowData: UserEndorsement) => { return rowData.soloEndorsement.endDate.toLocaleDateString(); }} />
           <Column header='Completed days' body={completedDays} />
           <Column header='Remaining days' body={remainingDays} />
-          <RenderIf truthValue={user?.soloManagement.isAdmin === true} elementTrue={
-            <Column header='Actions' body={(rowData: UserEndorsement) => {
-              return <Actions rowData={rowData} onCompleted={updateEndorsementData} />;
-            }} />} />
+          <Column header='Actions' body={(rowData: UserEndorsement) => {
+            return <Actions rowData={rowData} onCompleted={updateEndorsementData} />;
+          }} hidden={user?.soloManagement.isAdmin === false} />
         </DataTable>
       </AuthWrapper>
     </>
