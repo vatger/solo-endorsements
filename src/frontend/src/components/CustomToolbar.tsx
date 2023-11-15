@@ -55,8 +55,6 @@ export const CustomToolbar = () => {
       label: 'Solos', icon: 'pi pi-user', command: () => { navigate('/'); },
     }, {
       label: 'Stations', icon: 'pi pi-cog', command: () => { navigate('/stations'); },
-    }, {
-      label: 'Settings', icon: 'pi pi-sliders-v', command: () => { navigate('/settings'); },
     }];
   const startContent = [<TabMenu model={tabMenuItems} />];
 
