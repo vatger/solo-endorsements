@@ -158,7 +158,8 @@ function SoloEndorsements() {
         <DataTable value={filteredSoloData}>
           <Column
             header='ID' field='vatsim_id'
-            align='center' />
+            align='center'
+            filter />
           <Column
             header='Station'
             body={(rowData: UserEndorsement) => { return rowData.soloEndorsement.station.name; }}
