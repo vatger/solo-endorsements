@@ -7,7 +7,7 @@ import nestedobjectsUtils from '../utils/nestedobjects.utils';
 
 import { SoloManagement } from '@/shared/interfaces/user.interface';
 
-interface HomepageApiRepsonse {
+interface HomepageApiResponse {
   is_vatger_member: boolean,
   is_vatger_atd_lead: boolean | null,
   is_vatger_atd_examiner: boolean | null,
@@ -23,7 +23,7 @@ async function updateUserPermissions(id: string) {
       'Content-Type': 'application/json',
     };
 
-    const permissions: HomepageApiRepsonse = (await axios.get(config().homepageUrl + '/solos/' + id, { headers })).data;
+    const permissions: HomepageApiResponse = (await axios.get(config().homepageUrl + '/solos/' + id, { headers })).data;
 
     if (permissions.is_vatger_member === false) {
       return { isAdmin: false, isMentor: false };
