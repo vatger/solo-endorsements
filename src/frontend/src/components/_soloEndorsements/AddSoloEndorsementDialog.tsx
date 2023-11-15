@@ -16,29 +16,18 @@ import { Station } from '@/shared/interfaces/station.interface';
 
 function AddSoloEndorsementDialog({ firData, onCompleted }: { firData: FIR[], onCompleted: () => void }) {
   // ui states
-  const soloLengthOptions = [30, 180, 0];
+  const soloLengthOptions = [30, 180];
   const [soloLength, setSoloLength] = useState(soloLengthOptions[0]);
 
 
   const [selectedStation, setSelectedStation] = useState<Station>();
   const [id, setId] = useState<string>('');
   const [selectedStartDate, setSelectedStartDate] = useState<Date>(createDateWithDayOffset(0));
-  const [selectedEndDate, setSelectedEndDate] = useState<Date>(createDateWithDayOffset(soloLengthOptions[0]));
+  const [endDate, setEndDate] = useState<Date>(createDateWithDayOffset(soloLengthOptions[0]));
 
   const [disableSubmitButton, setDisableSubmitButton] = useState<boolean>(false);
 
   const [dataValid, setDataValid] = useState<boolean>(false);
-  useEffect(() => {
-    const dayDifference = calculateDayDifference(selectedStartDate, selectedEndDate);
-    for (const option of soloLengthOptions) {
-      if (option === dayDifference) {
-        setSoloLength(option);
-        return;
-      }
-    }
-
-    setSoloLength(0);
-  }, [selectedEndDate]);
 
   useEffect(() => {
     if (soloLength === 0) {
@@ -52,7 +41,7 @@ function AddSoloEndorsementDialog({ firData, onCompleted }: { firData: FIR[], on
       result = addDaysToDate(selectedStartDate, soloLength);
     }
 
-    setSelectedEndDate(result);
+    setEndDate(result);
   }, [soloLength, selectedStartDate]);
 
   useEffect(() => {
@@ -61,13 +50,13 @@ function AddSoloEndorsementDialog({ firData, onCompleted }: { firData: FIR[], on
       return;
     }
 
-    const soloLengthValid = soloLength <= 180 && calculateDayDifference(selectedStartDate, selectedEndDate) <= 180;
-    const datesValid = selectedStartDate.getTime() < selectedEndDate.getTime();
+    const soloLengthValid = soloLength <= 180 && calculateDayDifference(selectedStartDate, endDate) <= 180;
+    const datesValid = selectedStartDate.getTime() < endDate.getTime();
     const idValid = id.length >= 6;
     const selectedStationValid = selectedStation !== undefined;
 
     setDataValid(soloLengthValid && datesValid && idValid && selectedStationValid);
-  }, [selectedStartDate, selectedEndDate, soloLength, id, selectedStation]);
+  }, [selectedStartDate, endDate, soloLength, id, selectedStation]);
 
   const clickSubmit = () => {
     if (!dataValid || selectedStation === undefined) {
@@ -80,7 +69,7 @@ function AddSoloEndorsementDialog({ firData, onCompleted }: { firData: FIR[], on
       soloEndorsement: {
         station: selectedStation,
         startDate: selectedStartDate,
-        endDate: selectedEndDate,
+        endDate: endDate,
         completedDays: 0,
         maxDays: 180, //TODO: replace with station.maxDays
       },
@@ -126,11 +115,11 @@ function AddSoloEndorsementDialog({ firData, onCompleted }: { firData: FIR[], on
           <span className="p-float-label">
             <Calendar
               id="endDate"
-              value={selectedEndDate}
-              onChange={(e) => { setSelectedEndDate(e.target.value as Date); }}
+              readOnlyInput={true}
+              value={endDate}
               dateFormat="dd.mm.yy"
-              minDate={createDateWithDayOffset(0)}
-              maxDate={createDateWithDayOffset(180)}
+              minDate={createDateWithDayOffset(1)}
+              maxDate={createDateWithDayOffset(0)}
               style={{ width: '8rem' }} />
             <label htmlFor="endDate">Enddate</label>
           </span>
@@ -141,9 +130,8 @@ function AddSoloEndorsementDialog({ firData, onCompleted }: { firData: FIR[], on
                   <RadioButton inputId={String(item)} value={item} checked={soloLength === item} onChange={(e: RadioButtonChangeEvent) => setSoloLength(e.value)} />
                   <label
                     htmlFor={String(item)}
-                    className="ml-2">
-                    {item !== 0 ? ' ' + String(item) + ' Days' :
-                      ' Custom' + ((soloLength !== 30 && soloLength !== 180) ? ': ' + String(calculateDayDifference(selectedStartDate, selectedEndDate)) + ' Days' : '')}
+                    className="ml-2" >
+                    {' ' + String(item) + ' Days'}
                   </label>
                 </div>);
             })}
