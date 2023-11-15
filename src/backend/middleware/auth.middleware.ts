@@ -16,7 +16,7 @@ export async function authMiddleware(
   }
 
   try {
-    console.log(req.cookies);
+    // console.log(req.cookies);
     req.user = await authService.getUserFromToken(token);
   } catch (error) {
     return next(new APIError('Unauthorized', null, 401));
