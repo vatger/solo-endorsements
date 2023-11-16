@@ -26,7 +26,7 @@ export function remainingDays(rowData: UserEndorsement) {
     return 'Solo has ended.';
   }
 
-  return `${remainingSoloDays}`;
+  return `${remainingSoloDays + 1}`; // add additional day as endDate is included in endorsement
 }
 
 export function Actions({ rowData, onCompleted }: { rowData: UserEndorsement, onCompleted: () => void }) {
