@@ -136,6 +136,15 @@ function SoloEndorsements() {
           <Dialog visible={AddDialogVisibility} onHide={() => setAddDialogVisibility(false)}>
             <AddSoloEndorsementDialog onCompleted={() => { setAddDialogVisibility(false); updateEndorsementData(); }} firData={filteredFirData} />
           </Dialog>} />
+        <RenderIf truthValue={user?.soloManagement.isAdmin === true || user?.soloManagement.isMentor === true} elementTrue={
+          <div style={{ display: 'flex' }}>
+            <Button
+              icon='pi pi-plus'
+              label='Add Solo Endorsement'
+              severity='success'
+              style={{ minWidth: '100%' }}
+              onClick={() => { setAddDialogVisibility(true); }} />
+          </div>} />
         <TabMenu
           model={[
             { label: 'All' },
@@ -146,40 +155,40 @@ function SoloEndorsements() {
           activeIndex={activeIndex}
           onTabChange={(e) => { setFir(e.value.label as 'EDGG' | 'EDWW' | 'EDMM' | 'All'); setActiveIndex(e.index); }}
         />
-        <RenderIf truthValue={user?.soloManagement.isAdmin === true || user?.soloManagement.isMentor === true} elementTrue={
-          <div style={{ display: 'flex' }}>
-            <Button
-              icon='pi pi-plus'
-              label='Add Solo Endorsement'
-              severity='success'
-              style={{ minWidth: '100%' }}
-              onClick={() => { setAddDialogVisibility(true); }} />
-          </div>} />
-        <DataTable value={filteredSoloData}>
+        <DataTable sortField="soloEndorsement.endDate" sortOrder={1} value={filteredSoloData}>
           <Column
             body={userID}
             header='ID' field='vatsim_id'
+            sortable
             align='center'
             filter />
           <Column
             header='Station'
-            body={(rowData: UserEndorsement) => { return rowData.soloEndorsement.station.name; }}
+            field='soloEndorsement.station.name'
+            sortable
             align='center' />
           <Column
             header='Start Date'
+            field='soloEndorsement.startDate'
             body={(rowData: UserEndorsement) => { return rowData.soloEndorsement.startDate.toLocaleDateString(); }}
+            sortable
             align='center' />
           <Column
             header='End date'
+            field='soloEndorsement.endDate'
             body={(rowData: UserEndorsement) => { return rowData.soloEndorsement.endDate.toLocaleDateString(); }}
+            sortable
             align='center' />
           <Column
             header='Remaining days'
+            field='soloEndorsement.endDate'
             body={remainingDays}
+            sortable
             align='center' />
           <Column
             header='Extension Number'
-            body={(rowData: UserEndorsement) => { return rowData.soloEndorsement.extensionNumber; }}
+            field='soloEndorsement.extensionNumber'
+            sortable
             align='center' />
           <Column header='Actions' body={(rowData: UserEndorsement) => {
             return <Actions rowData={rowData} onCompleted={updateEndorsementData} />;
