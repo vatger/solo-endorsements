@@ -3,6 +3,7 @@ import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { Dialog } from 'primereact/dialog';
 import { TabMenu } from 'primereact/tabmenu';
+import { InputText } from 'primereact/inputtext';
 import { useContext, useEffect, useState } from 'react';
 
 import AuthContext from '../contexts/AuthProvider';
@@ -39,6 +40,8 @@ function SoloEndorsements() {
   const [stationData, setStationData] = useState<Station[]>([]);
   const [firData, setFirData] = useState<FIR[]>([]);
   const [filteredFirData, setFilteredFirData] = useState<FIR[]>([]);
+
+  const [searchTerm, setSearchTerm] = useState('');
 
   const updateEndorsementData = () => {
     endorsementService.getSoloEndorsements().then((data: UserEndorsement[]) => {
@@ -129,6 +132,8 @@ function SoloEndorsements() {
     setFilteredFirData(filteredData);
   }, [firData, fir, activeIndex]);
 
+
+
   return (
     <>
       <AuthWrapper>
@@ -144,6 +149,7 @@ function SoloEndorsements() {
               severity='success'
               style={{ minWidth: '100%' }}
               onClick={() => { setAddDialogVisibility(true); }} />
+            <InputText value={searchTerm} onChange={handleSearch} placeholder="Search..." />
           </div>} />
         <TabMenu
           model={[
