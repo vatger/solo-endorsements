@@ -16,7 +16,7 @@ import { Station } from '@/shared/interfaces/station.interface';
 
 function AddSoloEndorsementDialog({ firData, onCompleted }: { firData: FIR[], onCompleted: () => void }) {
   // ui states
-  const soloLengthOptions = [30, 180];
+  const soloLengthOptions = [30];
   const [soloLength, setSoloLength] = useState(soloLengthOptions[0]);
 
 
@@ -123,7 +123,7 @@ function AddSoloEndorsementDialog({ firData, onCompleted }: { firData: FIR[], on
               style={{ width: '8rem' }} />
             <label htmlFor="endDate">Enddate</label>
           </span>
-          <div className="flex align-items-center" style={{ marginLeft: '1vw', marginTop: '1%', marginBottom: '1%' }}>
+          <div className="align-items-center" style={{ marginLeft: '0.5vw' }}>
             {soloLengthOptions.map((item) => {
               return (
                 <div key={'RadioButton' + item} style={{ width: '10vw', marginTop: '1vh' }}>
