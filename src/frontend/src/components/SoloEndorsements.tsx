@@ -126,6 +126,30 @@ function SoloEndorsements() {
     }
 
     const filteredData = firData.filter((element: FIR) => element.name === fir);
+    filteredData.forEach((element: FIR) => {
+      element.stations.sort((stationA, stationB) => {
+        // split the station name to sort by last part
+        const partsA = stationA.name.split('_');
+        const partsB = stationB.name.split('_');
+
+        // Get the last part of the station name
+        const lastPartA = partsA[partsA.length - 1] || '';
+        const lastPartB = partsB[partsB.length - 1] || '';
+
+        // Sort by TWR < APP < CTR logic
+        const typeOrder = { 'TWR': 0, 'APP': 1, 'CTR': 2 };
+        const typeComparison = typeOrder[lastPartA] - typeOrder[lastPartB];
+        if (typeComparison !== 0) {
+          return typeComparison;
+        }
+
+        // If types are the same, sort alphabetically by the first part
+        const firstPartA = partsA[0] || '';
+        const firstPartB = partsB[0] || '';
+
+        return firstPartA.localeCompare(firstPartB);
+      });
+    });
     setFilteredFirData(filteredData);
   }, [firData, fir, activeIndex]);
 
