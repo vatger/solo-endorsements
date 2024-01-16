@@ -23,6 +23,7 @@ router.delete('/station/:id', authMiddleware, permissionMiddleware, stationContr
 router.get('/solos', authMiddleware, endorsementController.getSoloEndorsements);
 router.post('/solos', authMiddleware, permissionMiddleware, endorsementController.addSoloEndorsement);
 router.patch('/solos/extend/:id', authMiddleware, permissionMiddleware, endorsementController.extendSoloEndorsement);
+router.patch('/solos/pause/:id', authMiddleware, permissionMiddleware, endorsementController.pauseSoloEndorsement);
 router.delete('/solos/:id', authMiddleware, permissionMiddleware, endorsementController.deleteSoloEndorsement);
 
 router.use((req: Request, res: Response) => {

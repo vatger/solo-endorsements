@@ -38,6 +38,7 @@ export function Actions({ rowData, onCompleted }: { rowData: UserEndorsement, on
 
 
   const [disableExtendButton, setDisableExtendButton] = useState<boolean>(false);
+  const [disablePauseButton, setDisablePauseButton] = useState<boolean>(false);
   const [disableDeleteButton, setDisableDeleteButton] = useState<boolean>(false);
   const maxExtensionsReached = rowData.soloEndorsement.extensionNumber >= 2;
   const severity = !maxExtensionsReached ? 'success' : 'warning';
@@ -45,6 +46,10 @@ export function Actions({ rowData, onCompleted }: { rowData: UserEndorsement, on
   const extendSolo = () => {
     if (maxExtensionsReached) { setDisableExtendButton(false); return; }
     endorsementService.extendSoloEndorsement(rowData).then(() => { setDisableExtendButton(false); onCompleted(); });
+  };
+
+  const pauseSolo = () => {
+    endorsementService.pauseSoloEndorsement(rowData).then(() => { setDisablePauseButton(false); onCompleted(); });
   };
 
   const deleteSolo = () => {
@@ -62,13 +67,21 @@ export function Actions({ rowData, onCompleted }: { rowData: UserEndorsement, on
           onClick={() => { setDisableExtendButton(true); extendSolo(); }}
           disabled={disableExtendButton} />
         <RenderIf truthValue={user?.soloManagement.isAdmin === true} elementTrue={
-          <Button
-            label='Delete Endorsement'
-            severity='danger'
-            icon='pi pi-trash'
-            onClick={() => { setDisableDeleteButton(true); deleteSolo(); }}
-            disabled={disableDeleteButton}
-          />}
+          <>
+            <Button
+              label='Pause Endorsement'
+              severity='warning'
+              icon='pi pi-pause'
+              onClick={() => { setDisablePauseButton(true); pauseSolo(); }}
+              disabled={disablePauseButton}
+            />
+            <Button
+              label='Delete Endorsement'
+              severity='danger'
+              icon='pi pi-trash'
+              onClick={() => { setDisableDeleteButton(true); deleteSolo(); }}
+              disabled={disableDeleteButton}
+            /></>}
         />
       </div>
     </>

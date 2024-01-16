@@ -32,6 +32,16 @@ async function extendSoloEndorsement(req: Request, res: Response, next: NextFunc
   }
 }
 
+async function pauseSoloEndorsement(req: Request, res: Response, next: NextFunction) {
+  try {
+    const userEndorsement = await endorsementService.pauseSoloEndorsement(req.params.id);
+
+    res.json(userEndorsement);
+  } catch (error) {
+    next(error);
+  }
+}
+
 async function deleteSoloEndorsement(req: Request, res: Response, next: NextFunction) {
   try {
     const userEndorsement = await endorsementService.deleteSoloEndorsement(req.params.id);
@@ -42,4 +52,4 @@ async function deleteSoloEndorsement(req: Request, res: Response, next: NextFunc
   }
 }
 
-export default { getSoloEndorsements, addSoloEndorsement, extendSoloEndorsement, deleteSoloEndorsement };
+export default { getSoloEndorsements, addSoloEndorsement, extendSoloEndorsement, pauseSoloEndorsement, deleteSoloEndorsement };

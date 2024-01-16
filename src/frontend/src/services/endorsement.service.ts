@@ -32,6 +32,16 @@ async function extendSoloEndorsement(endorsement: UserEndorsement) {
   }
 }
 
+async function pauseSoloEndorsement(endorsement: UserEndorsement) {
+  try {
+    const response = await axios.patch('/api/v1/solos/pause/' + endorsement.vatsim_id);
+
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 async function deleteSoloEndorsement(endorsement: UserEndorsement) {
   try {
     const response = await axios.delete('/api/v1/solos/' + endorsement.vatsim_id);
@@ -42,4 +52,4 @@ async function deleteSoloEndorsement(endorsement: UserEndorsement) {
   }
 }
 
-export default { getSoloEndorsements, addSoloEndorsement, extendSoloEndorsement, deleteSoloEndorsement };
+export default { getSoloEndorsements, addSoloEndorsement, extendSoloEndorsement, pauseSoloEndorsement, deleteSoloEndorsement };

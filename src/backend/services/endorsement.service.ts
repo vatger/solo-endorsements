@@ -1,3 +1,4 @@
+import getConfig from '../config';
 import endorsementModel, { UserEndorsementDocument } from '../models/endorsement.model';
 import stationModel from '../models/station.model';
 
@@ -47,13 +48,18 @@ async function addSoloEndorsement(endorsement: UserEndorsement) {
       user = new endorsementModel(endorsement);
     }
 
+    // if max extension count has already been granted, do not grant another
+    if (user.soloEndorsement.extensionNumber >= getConfig().maxExtensionNumber) {
+      return;
+    }
+
     // create new endorsement, use saved completedDays from DB
     user.soloEndorsement = {
       station: endorsement.soloEndorsement.station,
       startDate: endorsement.soloEndorsement.startDate,
       endDate: endorsement.soloEndorsement.endDate,
       completedDays: user.soloEndorsement.completedDays,
-      extensionNumber: endorsement.soloEndorsement.extensionNumber,
+      extensionNumber: endorsement.soloEndorsement.extensionNumber + 1,
     };
 
     await user.save();
@@ -72,8 +78,8 @@ async function extendSoloEndorsement(endorsement: UserEndorsement) {
       return;
     }
 
-    // if two extension have already been granted, do not grant another
-    if (user.soloEndorsement.extensionNumber >= 2) {
+    // if max extension count has already been granted, do not grant another
+    if (user.soloEndorsement.extensionNumber >= getConfig().maxExtensionNumber) {
       return;
     }
 
@@ -98,7 +104,7 @@ async function extendSoloEndorsement(endorsement: UserEndorsement) {
   }
 }
 
-async function deleteSoloEndorsement(id: string) {
+async function pauseSoloEndorsement(id: string) {
   try {
     const user: UserEndorsementDocument | null = await endorsementModel.findOne({ vatsim_id: id });
 
@@ -121,4 +127,13 @@ async function deleteSoloEndorsement(id: string) {
   }
 }
 
-export default { getSoloEndorsements, addSoloEndorsement, extendSoloEndorsement, deleteSoloEndorsement };
+async function deleteSoloEndorsement(id: string) {
+  try {
+    const user = await endorsementModel.deleteOne({ vatsim_id: id });
+    return user;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export default { getSoloEndorsements, addSoloEndorsement, extendSoloEndorsement, pauseSoloEndorsement, deleteSoloEndorsement };
