@@ -59,7 +59,7 @@ async function addSoloEndorsement(endorsement: UserEndorsement) {
       startDate: endorsement.soloEndorsement.startDate,
       endDate: endorsement.soloEndorsement.endDate,
       completedDays: user.soloEndorsement.completedDays,
-      extensionNumber: endorsement.soloEndorsement.extensionNumber + 1,
+      extensionNumber: user.soloEndorsement.extensionNumber,
     };
 
     await user.save();
