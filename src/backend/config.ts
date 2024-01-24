@@ -20,5 +20,7 @@ export default function getConfig() {
 
     publicUrl: process.env.PUBLIC_URL ?? '',
     jwtSecret: process.env.JWT_SECRET ?? 'super-secret-secret!',
+
+    maxExtensionNumber: Number(process.env.MAX_EXTENSIONS) ?? 2,
   };
 }
